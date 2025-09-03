@@ -1,32 +1,12 @@
-import yfinance as yf
-from dcf_valuation import dcf_valuation
-
-ticker = yf.Ticker("2330.TW")  # or "TSM" for ADR
-
-# Free Cash Flow from OCF and CapEx
-ocf = float(ticker.cashflow.loc["Operating Cash Flow"].dropna().iloc[0])
-capex = abs(float(ticker.cashflow.loc["Capital Expenditure"].dropna().iloc[0]))
-fcf_twd = ocf - capex
-
-# Balance sheet items
-cash = float(ticker.balance_sheet.loc["Cash And Cash Equivalents"].dropna().iloc[0])
-debt = float(ticker.balance_sheet.loc["Total Debt"].dropna().iloc[0])
-shares = ticker.shares_outstanding
-
-# Assumptions
-growth_rate, years, wacc, g_term = 0.05, 5, 0.08, 0.03
-
-# Run DCF
-vps, ev = dcf_valuation(
-    fcf=fcf_twd/1e6,
-    growth_rate=growth_rate,
-    years=years,
-    r=wacc,
-    g=g_term,
-    cash_and_equiv=cash/1e6,
-    total_debt=debt/1e6,
-    shares_outstanding=shares/1e6
-)
-
-print(f"EV (TWD, millions): {ev:,.2f}")
-print(f"Equity Value per Share (TWD): {vps:,.2f}")
+This project provides a Python-based Discounted Cash Flow (DCF) valuation model that combines fundamental financial analysis with programmatic data retrieval.
+Unlike a static Excel model, this implementation allows you to:
+Automate financial data collection: By integrating with sources such as Yahoo Finance, the model can fetch operating cash flows, capital expenditures, cash balances, debt levels, and shares outstanding directly from public filings.
+Perform customizable valuations: Users can adjust key assumptions — growth rates, discount rate (WACC), and terminal growth — to test different scenarios.
+Run sensitivity analysis: The framework can be easily extended to evaluate how valuation results change with varying assumptions (e.g., WACC vs. perpetual growth rate), producing tables or heatmaps that highlight the model’s robustness or fragility.
+Maintain transparency: The code is concise and well-documented, making it easy to trace each step of the valuation process. This ensures that the logic behind the valuation is clear, reproducible, and easy to explain to both technical and non-technical audiences.
+The model is particularly useful for:
+Finance students — to learn and practice valuation techniques beyond spreadsheets.
+Investment analysts and researchers — who need quick, scriptable DCF estimates for screening companies.
+Interview preparation — as a demonstration of both financial acumen and coding ability.
+Educators — who want to showcase a modern, reproducible workflow for corporate finance.
+By bridging corporate finance fundamentals and Python programming, this repository demonstrates how valuation can be made more scalable, reproducible, and transparent.
